@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Muslim Name Generator</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
     <script>
       tailwind.config = {
         darkMode: 'class',
@@ -17,8 +17,12 @@
             keyframes: {
               float: {
                 '0%, 100%': { transform: 'translateY(0)' },
-                '50%': { transform: 'translateY(-8px)' },
+                '50%': { transform: 'translateY(-6px)' },
               },
+              pop: {
+                '0%': { transform: 'scale(0.95)', opacity: 0 },
+                '100%': { transform: 'scale(1)', opacity: 1 }
+              }
             },
             animation: {
               float: 'float 3s ease-in-out infinite',
@@ -36,15 +40,17 @@
         border: 1px solid rgba(255, 255, 255, 0.2);
       }
 
-      @keyframes pop {
-        0% {
-          transform: scale(0.95);
-          opacity: 0;
-        }
-        100% {
-          transform: scale(1);
-          opacity: 1;
-        }
+      .gender-card input:checked + div {
+        transform: scale(1.05);
+      }
+
+      .peer:checked + div {
+        border-width: 2px;
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.5);
+      }
+
+      .peer[value="girl"]:checked + div {
+        box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.5);
       }
     </style>
   </head>
@@ -53,30 +59,36 @@
 
     <!-- Navbar -->
     <nav class="flex justify-between items-center px-6 py-4 bg-white/70 dark:bg-gray-900/70 shadow-md backdrop-blur-md">
-      <h1 class="text-xl font-bold text-gray-800 dark:text-white">Muslim NameGen</h1>
+      <h1 class="text-xl font-bold text-gray-800 dark:text-white">Muslim Name Gen</h1>
       <button onclick="toggleTheme()" class="text-sm px-4 py-1 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 transition">
-        Toggle Theme
+        Change Theme
       </button>
     </nav>
 
     <!-- Main content -->
     <main class="flex items-center justify-center p-6">
-      <div class="max-w-md w-full p-6 rounded-2xl shadow-2xl glass dark:bg-gray-900 bg-white text-center space-y-6 mt-10 transition duration-500">
+      <div class="max-w-md w-full p-6 mt-10 rounded-2xl shadow-2xl glass dark:bg-gray-900 bg-white text-center space-y-6 transition duration-500">
 
         <!-- Title -->
         <div>
           <h2 class="text-3xl font-bold text-gray-800 dark:text-white">Generate Islamic Names</h2>
-          <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Click a button to get unique names</p>
+          <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Select gender and click the button</p>
         </div>
 
-        <!-- Buttons -->
-        <div class="flex justify-center gap-4">
-          <button onclick="generateName('boy')" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-md transition font-semibold">
-            Boy
-          </button>
-          <button onclick="generateName('girl')" class="px-6 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-full shadow-md transition font-semibold">
-            Girl
-          </button>
+        <!-- Gender Selector -->
+        <div class="flex justify-center gap-6 mt-4">
+          <label class="gender-card">
+            <input type="radio" name="gender" value="boy" class="hidden peer" checked />
+            <div class="w-24 h-24 flex items-center justify-center rounded-xl border-2 peer-checked:border-purple-600 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-white font-semibold transition hover:shadow-lg">
+              Boy
+            </div>
+          </label>
+          <label class="gender-card">
+            <input type="radio" name="gender" value="girl" class="hidden peer" />
+            <div class="w-24 h-24 flex items-center justify-center rounded-xl border-2 peer-checked:border-pink-500 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-white font-semibold transition hover:shadow-lg">
+              Girl
+            </div>
+          </label>
         </div>
 
         <!-- Name Display -->
@@ -86,7 +98,7 @@
             onclick="copyToClipboard(this)"
             class="cursor-pointer text-2xl font-semibold text-gray-800 dark:text-white bg-gray-100 dark:bg-gray-800 py-4 px-6 rounded-xl shadow-inner transition hover:bg-green-100 dark:hover:bg-green-800 animate-float"
           >
-            Click a button to generate name
+            Click "Generate" to get name
           </div>
           <button
             onclick="copyToClipboard(document.getElementById('nameDisplay'))"
@@ -100,14 +112,14 @@
         <!-- Copy Message -->
         <div id="copyMsg" class="text-sm text-green-600 dark:text-green-400 hidden">Copied to clipboard!</div>
 
-        <!-- Share Buttons -->
-        <div class="flex justify-center gap-4 mt-4">
-          <a id="whatsappShare" target="_blank" class="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600 transition text-sm">WhatsApp</a>
-          <a id="facebookShare" target="_blank" class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition text-sm">Facebook</a>
-        </div>
+        <!-- Generate Button -->
+        <button onclick="generateSelectedName()" class="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-full transition">
+          Generate New Name
+        </button>
       </div>
     </main>
 
+    <!-- Script -->
     <script src="main.js"></script>
     <script>
       function toggleTheme() {
