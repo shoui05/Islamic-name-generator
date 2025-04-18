@@ -15,6 +15,11 @@ async function loadNames() {
   }
 }
 
+function generateSelectedName() {
+  const selectedGender = document.querySelector('input[name="gender"]:checked').value;
+  generateName(selectedGender);
+}
+
 function generateName(type) {
   const names = type === "boy" ? boyNames : girlNames;
   const used = type === "boy" ? usedBoyNames : usedGirlNames;
@@ -34,7 +39,6 @@ function generateName(type) {
   display.classList.add("pop-in");
 
   document.getElementById("copyMsg").classList.add("hidden");
-  updateShareLinks(randomName);
 }
 
 function copyToClipboard(el) {
@@ -46,12 +50,6 @@ function copyToClipboard(el) {
     toast.classList.remove("hidden");
     setTimeout(() => toast.classList.add("hidden"), 2000);
   });
-}
-
-function updateShareLinks(name) {
-  const text = encodeURIComponent(`Check out this Muslim name: ${name}`);
-  document.getElementById("whatsappShare").href = `https://wa.me/?text=${text}`;
-  document.getElementById("facebookShare").href = `https://www.facebook.com/sharer/sharer.php?u=https://your-website.com&quote=${text}`;
 }
 
 loadNames();
