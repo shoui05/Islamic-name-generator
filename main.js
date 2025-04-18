@@ -1,55 +1,53 @@
-let boyNames = [];
-let girlNames = [];
-let usedBoyNames = [];
-let usedGirlNames = [];
+let usedNames = {
+  boy: new Set(),
+  girl: new Set(),
+};
 
-async function loadNames() {
-  try {
-    const boyResponse = await fetch("boy-names.json");
-    boyNames = await boyResponse.json();
+async function fetchNames(gender) {
+  const response = await fetch(`${gender}-names.json`);
+  const names = await response.json();
+  return names;
+}
 
-    const girlResponse = await fetch("girl-names.json");
-    girlNames = await girlResponse.json();
-  } catch (error) {
-    document.getElementById("nameDisplay").textContent = "Failed to load names.";
+async function generateSelectedName() {
+  const gender = document.querySelector('input[name="gender"]:checked').value;
+  const names = await fetchNames(gender);
+  let name;
+
+  // Try up to 10 times to get a unique name
+  for (let i = 0; i < 10; i++) {
+    const randomIndex = Math.floor(Math.random() * names.length);
+    name = names[randomIndex];
+    if (!usedNames[gender].has(name)) {
+      usedNames[gender].add(name);
+      break;
+    }
   }
-}
 
-function generateSelectedName() {
-  const selectedGender = document.querySelector('input[name="gender"]:checked').value;
-  generateName(selectedGender);
-}
-
-function generateName(type) {
-  const names = type === "boy" ? boyNames : girlNames;
-  const used = type === "boy" ? usedBoyNames : usedGirlNames;
-
-  if (names.length === 0) return;
-
-  if (used.length === names.length) used.length = 0;
-
-  const available = names.filter((n) => !used.includes(n));
-  const randomName = available[Math.floor(Math.random() * available.length)];
-  used.push(randomName);
+  // If all names used, reset
+  if (usedNames[gender].size === names.length) {
+    usedNames[gender].clear();
+  }
 
   const display = document.getElementById("nameDisplay");
-  display.textContent = randomName;
-  display.classList.remove("pop-in");
-  void display.offsetWidth;
-  display.classList.add("pop-in");
-
-  document.getElementById("copyMsg").classList.add("hidden");
+  display.textContent = name;
+  animateName();
 }
 
-function copyToClipboard(el) {
-  const text = el.textContent;
-  if (!text || text.includes("Click")) return;
-
+function copyToClipboard(element) {
+  const text = element.textContent;
   navigator.clipboard.writeText(text).then(() => {
-    const toast = document.getElementById("copyMsg");
-    toast.classList.remove("hidden");
-    setTimeout(() => toast.classList.add("hidden"), 2000);
+    const copyMsg = document.getElementById("copyMsg");
+    copyMsg.classList.remove("hidden");
+    setTimeout(() => {
+      copyMsg.classList.add("hidden");
+    }, 1500);
   });
 }
 
-loadNames();
+function animateName() {
+  const display = document.getElementById("nameDisplay");
+  display.classList.remove("animate-pop");
+  void display.offsetWidth; // Trigger reflow to restart animation
+  display.classList.add("animate-pop");
+      }
